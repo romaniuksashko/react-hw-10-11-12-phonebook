@@ -1,14 +1,15 @@
 import { Component } from "react";
+import { DivStyled, InputStyled } from "./Filter.styled";
 
 class Filter extends Component {
   render() {
     const { filter, handleFilter } = this.props;
 
     return (
-      <div>
-        <label htmlFor="filter">Find contacts by name </label>
-        <input type="text" value={filter} onChange={handleFilter} id="filter" />
-      </div>
+      <DivStyled>
+        <label htmlFor="filter">Find contacts by name: </label>
+        <InputStyled type="text" value={filter} onChange={handleFilter} id="filter" />
+      </DivStyled>
     );
   }
 }
