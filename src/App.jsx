@@ -1,7 +1,7 @@
-import { Component } from 'react'
-import ContactForm from './components/ContactForm/ContactForm';
-import Filter from './components/Filter/Filter';
-import ContactList from './components/ContactList/ContactList';
+import { Component } from "react";
+import ContactForm from "./components/ContactForm/ContactForm";
+import Filter from "./components/Filter/Filter";
+import ContactList from "./components/ContactList/ContactList";
 
 class App extends Component {
   state = {
@@ -14,23 +14,38 @@ class App extends Component {
     filter: "",
   };
 
+  componentDidMount() {
+    const parsingJson = JSON.parse(localStorage.getItem("contacts"));
+
+    if (parsingJson) {
+      this.setState({
+        contacts: parsingJson,
+      });
+    }
+  }
+
+  componentDidUpdate() {
+    const jsonContacts = JSON.stringify(this.state.contacts);
+
+    localStorage.setItem("contacts", jsonContacts);
+  }
 
   handleFilter = (event) => {
     this.setState({
       filter: event.target.value,
-    })
-  }
+    });
+  };
 
   handleDelete = (contactId) => {
     this.setState((prev) => ({
       contacts: prev.contacts.filter((item) => item.id !== contactId),
     }));
-  }
+  };
 
   handleAdd = (newContact) => {
-    const dublicateName = this.state.contacts.some(({name}) => {
+    const dublicateName = this.state.contacts.some(({ name }) => {
       return name.toLowerCase() === newContact.name.toLowerCase();
-    })
+    });
 
     if (dublicateName) {
       alert(`${newContact.name} уже є в контактах`);
@@ -41,13 +56,15 @@ class App extends Component {
       return {
         contacts: [...prev.contacts, newContact],
       };
-    });    
-  }
+    });
+  };
 
   render() {
     const { contacts, filter, name, number } = this.state;
 
-    const filterContact = contacts.filter((item) => item.name.toLowerCase().trim().includes(filter.toLowerCase().trim()))
+    const filterContact = contacts.filter((item) =>
+      item.name.toLowerCase().trim().includes(filter.toLowerCase().trim()),
+    );
 
     return (
       <>
@@ -56,11 +73,17 @@ class App extends Component {
 
         <h2>Contacts</h2>
         <Filter filter={filter} handleFilter={this.handleFilter} />
-
-        <ContactList filterContact={filterContact} handleDelete={this.handleDelete} />
+        {this.state.contacts.length > 0 ? (
+          <ContactList
+            filterContact={filterContact}
+            handleDelete={this.handleDelete}
+          />
+        ) : (
+          <p>Не додано жодних контактів</p>
+        )}
       </>
     );
   }
 }
 
-export default App
+export default App;
